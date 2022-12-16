@@ -1,0 +1,52 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+}
+.menu-container{
+    height: 5rem;
+    background-color: lightblue;
+}
+.formula-bar-container{
+    height: 2rem;
+    background-color: rgb(87, 144, 164);
+}
+.grid-container{
+    height: calc( 100vh - ( 5rem + 2rem + 3rem ));
+    background-color: rgb(210, 216, 210);
+}
+
+/* add sheets styling => container at bottom  */
+.multi-sheets-container{
+    height: 3rem;
+    background-color: lightgreen;
+    display: flex;
+}
+.add-sheet-button{
+    min-width: 3rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgb(91, 202, 91);
+}
+.fa-plus{
+    font-size: 1.5rem;
+}
+.sheets-container{
+    display: flex;
+    overflow: auto;
+}
+.sheet{
+    height: 100%;
+    min-width: 5rem;
+    background-color: rgb(20, 227, 20);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.active-sheet{
+    background-color: rgb(184, 228, 184);
+    border: 1px solid green;
+}
