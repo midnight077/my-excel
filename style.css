@@ -4,10 +4,7 @@
 body{
     margin: 0;
 }
-.menu-container{
-    height: 5rem;
-    background-color: lightblue;
-}
+
 .formula-bar-container{
     height: 2rem;
     background-color: rgb(87, 144, 164);
@@ -17,7 +14,7 @@ body{
     background-color: rgb(210, 216, 210);
 }
 
-/* add sheets styling => container at bottom  */
+/* add sheets styling => container at bottom ---------------------------------------------------- */
 .multi-sheets-container{
     height: 3rem;
     background-color: lightgreen;
@@ -51,4 +48,57 @@ body{
     border: 1px solid green;
 }
 
+/* menu container css  ---------------------------------------------- */
+.menu-container{
+    height: 5rem;
+    background-color: lightblue;
+    display: flex;
+    align-items: center;
+}
 
+.menu-container>*{
+    height: 80%;
+    width: 20rem;
+    border-right: 1px solid;
+}
+
+.font-styling-container{
+    /* height: 100%; */
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.font-styling-container>*{
+    height: 100%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.styling-p1-container{
+    
+}
+.font-family-container{
+    width: 90%;
+}
+.font-style-container{
+    width: 90%;
+}
+.BUI-container{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}
+.BUI-container>*{
+    width: 30%;
+    height: 100%;
+}
+.font-size-container{
+    width: 90%;
+}
+.font-color-container{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}

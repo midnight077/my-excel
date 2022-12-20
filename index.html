@@ -12,8 +12,62 @@
 </head>
 
 <body>
-    <div class="menu-container"></div>
-    <div class="formula-bar-container"></div>
+    <div class="menu-container">
+        <div class="cut-copy-paste-container">
+            <div class="paste"></div>
+            <div class="cut"></div>
+            <div class="copy"></div>
+        </div>
+
+        <div class="font-styling-container">
+            <div class="styling-p1-container">
+                <select class="font-family-container">
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Calibri">Calibri</option>
+                    <option value="Baguet Script">Baguet Script</option>
+                    <option value="Cambria">Cambria</option>
+                    <option value="Georgia">Georgia </option>
+                    <option value="Trebuchet MS ">Trebuchet MS </option>
+                    <option value="Garamond">Garamond</option>
+                </select>
+                <div class="BUI-container">
+                    <button value="B"> <b>B</b> </button>
+                    <button value="I"> <i>I</i> </button>
+                    <button value="U"> <u>U</u> </button>
+                </div>
+            </div>
+            <div class="styling-p2-container">
+
+                <select class="font-size-container">
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="14">14</option>
+                    <option value="16">16 </option>
+                    <option value="18">18</option>
+                    <option value="20">20</option>
+                    <option value="22">22</option>
+                    <option value="24">24</option>
+                </select>
+
+                <div class="font-color-container">
+                    <input type="color" class="bg-color">
+                    <input type="color" class="text-color">
+                </div>
+            </div>
+        </div>
+        <div class="alignment-container">
+
+        </div>
+
+
+    </div>
+
+    <div class="formula-bar-container">
+        <input type="text" class="cell-identify" disabled>
+        :
+        <input type="text" class="formula-bar">
+    </div>
 
     <div class="grid-container">
         <div class="top-left-box"></div>
@@ -33,8 +87,10 @@
             <div class="sheet active-sheet" sheetIdx=0> sheet 1</div>
         </div>
     </div>
-    <script src="script.js"></script>
+
     <script src="grid/grid.js" defer></script>
+
+    <script src="script.js" defer></script>
 </body>
 
 </html>

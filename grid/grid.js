@@ -19,8 +19,26 @@ str = "";
 for (let i = 0; i < 100; i++) {
     str += `<div class="row-grid">`;
     for (let j = 0; j < 26; j++) {
-        str += `<div class="grid-ele">${String.fromCharCode(65 + j)}${i + 1} </div>`
+        str += `<div class="grid-ele" rid=${i} cid=${j} contentEditable="true" spellcheck="false"> </div>`
     }
     str += "</div>";
 }
 document.querySelector(".grid").innerHTML = str;
+
+let arr=[];
+let arr2 = [];
+for(let j =0 ; j< 26;j++){
+    let obj = {
+        fontFamily : "Times New Roman",
+        fontWeight : "normal",
+        fontStyle : "normal",
+        textDecoration : "none",
+        fontSize : "16px"
+    };
+    arr.push(obj);
+}
+for(let i = 0 ; i< 100 ; i++){
+    arr2.push(arr);
+}
+// console.log(arr2);arr[]
+
