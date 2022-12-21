@@ -1,30 +1,44 @@
 'use strict';
-
+let currsheetIdx = 0;
+let arr2 = arr3[currsheetIdx];
 let addSheetBtn = document.querySelector(".add-sheet-button");
 let sheetContainer = document.querySelector(".sheets-container");
 let allGridCells = document.querySelectorAll(".grid-ele");
 let cellIdentify = document.querySelector(".cell-identify");
+
 let fontFamilyBtn = document.querySelector(".font-family-container");
 let BUIContainer = document.querySelectorAll(".BUI-container>*");
 let fontSizeCont = document.querySelector(".font-size-container");
+let bgColor = document.querySelector(".bg-color");
+let textColor = document.querySelector(".text-color");
+let alignmentBtns = document.querySelectorAll(".alignment-container>*");
 // *********************************************************************************
 
-addSheetBtn.addEventListener("click", createNewSheet);
-
-for(let i = 0 ; i< allGridCells.length ; i++){
-    allGridCells[i].addEventListener("click" , selectACell);
+addSheetBtn.addEventListener("click",function(e){
+    storeTextInDB(e);
+    createNewSheet(e);
+});
+for (let i = 0; i < allGridCells.length; i++) {
+    allGridCells[i].addEventListener("click", selectACell);
+    // allGridCells[i].addEventListener("keydown", storeTextInDB);
 }
-document.querySelector(".sheet").addEventListener("click" , handleActiveSheet);
+document.querySelector(".sheet").addEventListener("click", handleActiveSheet);
 
+// menu cont event listener ---------------------------------------------
 fontFamilyBtn.addEventListener("change", changeFontFamily);
-for(let i =0 ; i<BUIContainer.length ; i++){
+for (let i = 0; i < BUIContainer.length; i++) {
     BUIContainer[i].addEventListener("click", buiStyling);
 }
 fontSizeCont.addEventListener("change", changeFontSize);
+bgColor.addEventListener("change", changeBGColor);
+textColor.addEventListener("change", changeTextColor);
+for (let i = 0; i < alignmentBtns.length; i++)
+    alignmentBtns[i].addEventListener("click", changeAlignment);
 
-
+// ********************************************************************************
 // handling multiple sheets ************************************************
-function createNewSheet(e){
+function createNewSheet(e) {
+    // create new sheet in UI
     let allSheets = document.querySelectorAll(".sheet");
     let sheetIdx = allSheets[allSheets.length - 1].getAttribute("sheetIdx");
     sheetIdx = parseInt(sheetIdx);
@@ -32,108 +46,208 @@ function createNewSheet(e){
     // create a sheet
     let sheet = document.createElement("div");
     sheet.classList.add("sheet");
-    sheet.setAttribute("sheetIdx", sheetIdx+1);
-    sheet.innerText = `sheet ${sheetIdx+2}`;
+
+    // make new sheet active
+    for (let i = 0; i < allSheets.length; i++) {
+        allSheets[i].classList.remove("active-sheet");
+    }
+    sheet.classList.add("active-sheet");
+    
+
+    sheet.setAttribute("sheetIdx", sheetIdx + 1);
+    sheet.innerText = `sheet ${sheetIdx + 2}`;
     sheetContainer.appendChild(sheet);
     sheet.addEventListener("click", handleActiveSheet);
+    // create sheet in data base
+    createNewSheetInDB();
+}
+function createNewSheetInDB(){
+    initNewSheet(arr3);
+    // clear data in UI
+    for(let i = 0 ; i< allGridCells.length ; i++)
+        allGridCells[i].innerText = allGridCells[i].style = "";
+    arr2 = arr3[arr3.length-1];
+    allGridCells[0].click();
 }
 
-function handleActiveSheet(e){
+function handleActiveSheet(e) {
     let allSheets = document.querySelectorAll(".sheet");
     console.log(e.currentTarget);
-    for(let i=0 ; i < allSheets.length ; i++){
+    for (let i = 0; i < allSheets.length; i++) {
         console.log(allSheets[i]);
         allSheets[i].classList.remove("active-sheet");
     }
     e.currentTarget.classList.add("active-sheet");
 
+    // load data form data base
+    currsheetIdx = e.currentTarget.getAttribute("sheetidx");
+    arr2 = arr3[currsheetIdx];
+
+    loadDataInUI(arr2);
+    console.log(arr2);
+}
+
+function loadDataInUI(arr2){
+    for(let i=0 ; i< arr2.length ; i++)
+        for(let j = 0 ; j < arr2[0].length ; j++){
+            let aCell = allGridCells[i*26 + j];
+            aCell.style.fontFamily =  arr2[i][j].fontFamily;
+            aCell.style.fontWeight =  arr2[i][j].fontWeight;
+            aCell.style.fontFamily =  arr2[i][j].fontStyle;
+            aCell.style.fontFamily =  arr2[i][j].textDecoration;
+            aCell.style.fontFamily =  arr2[i][j].fontSize;
+            aCell.style.fontFamily =  arr2[i][j].bgColor;
+            aCell.style.fontFamily =  arr2[i][j].textColor;
+            aCell.style.fontFamily =  arr2[i][j].textAlignment;
+            aCell.innerText =  arr2[i][j].text;
+        }
+    allGridCells[0].click();
+}
+
+function storeTextInDB(e){
+    for(let i=0 ; i< 100 ; i++){
+        for(let j=0 ; j<26; j++){
+            let cell = allGridCells[i*26+j];
+            let t = cell.innerText;
+            arr2[i][j].text = t;
+            // console.log(t);
+            // t+="abc";
+            console.log( arr2[i][j].text);
+        }
+        console.log(arr2[0][0].text);
+    }
+    console.log(arr2);
 }
 
 // getting cell in formula bar *****************************************************
 //setting initial value of formula bar
-
 allGridCells[0].click();
-function selectACell(e){
+
+// display cellname to formula bar
+function selectACell(e) {
     // console.log(e.target);
-    // applying cellname to formula bar
     let cellNode = e.target;
     let rID = Number(cellNode.getAttribute("rid"));
     let cID = Number(cellNode.getAttribute("cid"));
-    console.log(rID,cID);
-    cellIdentify.value = String.fromCharCode(65+cID) + (rID+1);
+    console.log(rID, cID);
+    cellIdentify.value = String.fromCharCode(65 + cID) + (rID + 1);
 
     // set font styling in menu bar
-    setMenuDefaults(rID,cID);
+    setMenuDefaults(rID, cID);
 }
-
-
-
 
 //  styling bar ***********************************************************************
 
-function changeFontFamily(e){
+function changeFontFamily(e) {
 
     // get cell id on which change has to be applies
-    let {rowAd , colAd } = getRowColId(cellIdentify.value);
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
     // let cell = document.querySelector(`.grid-ele[rid="${rowAd}"][cid="${colAd}"]`);
-    let cell = allGridCells[rowAd*26 + colAd ];
+    let cell = allGridCells[rowAd * 26 + colAd];
     cell.style.fontFamily = e.target.value;
     // setting in array
     arr2[rowAd][colAd].fontFamily = e.target.value;
 }
 
-function buiStyling(e){
-    let {rowAd , colAd } = getRowColId(cellIdentify.value);
-    let cell = allGridCells[rowAd*26 + colAd ];
+function buiStyling(e) {
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    let cell = allGridCells[rowAd * 26 + colAd];
     let selectedTag = e.currentTarget.value;
-    if(selectedTag == "B"){
-        if(cell.style.fontWeight == "bold"){
+    if (selectedTag == "B") {
+        if (cell.style.fontWeight == "bold") {
             arr2[rowAd][colAd].fontWeight = cell.style.fontWeight = "normal";
+            BUIContainer[0].classList.remove("active-icon");
         }
-        else{
-            arr2[rowAd][colAd].fontWeight = cell.style.fontWeight = "bold" ;
-        }
-    }
-    else if(selectedTag == "I"){
-        if(cell.style.fontStyle  == "italic"){
-            arr2[rowAd][colAd].fontStyle =cell.style.fontStyle  = "normal";
-        }
-        else{
-            arr2[rowAd][colAd].fontStyle = cell.style.fontStyle  = "italic" ;
+        else {
+            arr2[rowAd][colAd].fontWeight = cell.style.fontWeight = "bold";
+            BUIContainer[0].classList.add("active-icon");
         }
     }
-    else if(selectedTag == "U"){
-        if(cell.style.textDecoration   == "underline"){
-            arr2[rowAd][colAd].textDecoration = cell.style.textDecoration   = "none";
+    else if (selectedTag == "I") {
+        if (cell.style.fontStyle == "italic") {
+            arr2[rowAd][colAd].fontStyle = cell.style.fontStyle = "normal";
+            BUIContainer[1].classList.remove("active-icon");
         }
-        else{
-            arr2[rowAd][colAd].textDecoration = cell.style.textDecoration   = "underline" ;
+        else {
+            arr2[rowAd][colAd].fontStyle = cell.style.fontStyle = "italic";
+            BUIContainer[1].classList.add("active-icon");
         }
-        
+    }
+    else if (selectedTag == "U") {
+        if (cell.style.textDecoration == "underline") {
+            arr2[rowAd][colAd].textDecoration = cell.style.textDecoration = "none";
+            BUIContainer[2].classList.remove("active-icon");
+        }
+        else {
+            arr2[rowAd][colAd].textDecoration = cell.style.textDecoration = "underline";
+            BUIContainer[2].classList.add("active-icon");
+        }
+
     }
 }
 
-function changeFontSize(e){
-    console.log(typeof(e.target.value));
-    let {rowAd , colAd } = getRowColId(cellIdentify.value);
-    let cell = allGridCells[rowAd*26 + colAd ];
-    cell.style.fontSize = e.target.value+"px";
-    arr2[rowAd][colAd].fontSize = e.target.value +"px";
-    console.log(arr2[rowAd][colAd]);    
+function changeFontSize(e) {
+    console.log(typeof (e.target.value));
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    let cell = allGridCells[rowAd * 26 + colAd];
+    cell.style.fontSize = e.target.value + "px";
+    arr2[rowAd][colAd].fontSize = e.target.value + "px";
+    console.log(arr2[rowAd][colAd]);
 }
 
-function getRowColId(cellAd){
+function changeBGColor(e) {
+    // console.log(bgColor.value);
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    let cell = allGridCells[rowAd * 26 + colAd];
+    cell.style.backgroundColor = bgColor.value;
+    arr2[rowAd][colAd].bgColor = bgColor.value;
+
+}
+function changeTextColor(e) {
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    let cell = allGridCells[rowAd * 26 + colAd];
+    cell.style.color = textColor.value;
+    arr2[rowAd][colAd].textColor = textColor.value;
+}
+
+function changeAlignment(e) {
+    // console.log(e.currentTarget);
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    let cell = allGridCells[rowAd * 26 + colAd];
+    console.log(e.target.classList[0]);
+    let alig = e.currentTarget.classList[0];
+    cell.style.textAlign = alig;
+    arr2[rowAd][colAd].textAlignment = alig;
+    console.log(arr2);
+}
+
+function getRowColId(cellAd) {
     let colAd = cellAd[0];
     let rowAd = cellAd.slice(1);
     // console.log(colAd, rowAd)
-    colAd =parseInt(colAd,36)-9 -1;
-    rowAd = rowAd-1;
-    return {rowAd , colAd};
+    colAd = parseInt(colAd, 36) - 9 - 1;
+    rowAd = rowAd - 1;
+    return { rowAd, colAd };
 }
 
-function setMenuDefaults(rID , cID){
+function setMenuDefaults(rID, cID) {
     fontFamilyBtn.value = arr2[rID][cID].fontFamily;
-
-    console.log(arr2[rID][cID].fontSize);
+    // bui cont
+    if (arr2[rID][cID].fontWeight == "bold")
+        BUIContainer[0].classList.add("active-icon");
+    else
+        BUIContainer[0].classList.remove("active-icon");
+    if (arr2[rID][cID].fontStyle == "italic")
+        BUIContainer[1].classList.add("active-icon");
+    else
+        BUIContainer[1].classList.remove("active-icon");
+    if (arr2[rID][cID].textDecoration == "underline")
+        BUIContainer[2].classList.add("active-icon");
+    else
+        BUIContainer[2].classList.remove("active-icon");
+    // font size
     fontSizeCont.value = arr2[rID][cID].fontSize.split("px")[0];
+    // color
+    bgColor.value = arr2[rID][cID].bgColor;
+    textColor.value = arr2[rID][cID].textColor;
 }

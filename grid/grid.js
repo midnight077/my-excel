@@ -25,20 +25,29 @@ for (let i = 0; i < 100; i++) {
 }
 document.querySelector(".grid").innerHTML = str;
 
-let arr=[];
-let arr2 = [];
-for(let j =0 ; j< 26;j++){
-    let obj = {
-        fontFamily : "Times New Roman",
-        fontWeight : "normal",
-        fontStyle : "normal",
-        textDecoration : "none",
-        fontSize : "16px"
-    };
-    arr.push(obj);
+let arr3 = [];
+function initNewSheet(arr3) {
+    let arr = [];
+    let arr2 = [];
+    for (let j = 0; j < 26; j++) {
+        let obj = {
+            fontFamily: "Times New Roman",
+            fontWeight: "normal",
+            fontStyle: "normal",
+            textDecoration: "none",
+            fontSize: "16px",
+            bgColor: "#FFFFFF",
+            textColor: "#000000",
+            textAlignment: "left",
+            text: ""
+        };
+        arr.push(obj);
+    }
+    for (let i = 0; i < 100; i++) {
+        arr2.push(arr);
+    }
+    arr3.push(arr2);
 }
-for(let i = 0 ; i< 100 ; i++){
-    arr2.push(arr);
-}
-// console.log(arr2);arr[]
 
+initNewSheet(arr3);
+console.log(arr3);

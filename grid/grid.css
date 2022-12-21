@@ -47,9 +47,9 @@
     min-width: 7rem;
     background-color: lightcyan;
     border: 1px solid;
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
 }
 
 .row-grid {

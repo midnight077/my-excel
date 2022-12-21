@@ -48,7 +48,7 @@ body{
     border: 1px solid green;
 }
 
-/* menu container css  ---------------------------------------------- */
+/* menu container css  ***************************************************- */
 .menu-container{
     height: 5rem;
     background-color: lightblue;
@@ -61,7 +61,7 @@ body{
     width: 20rem;
     border-right: 1px solid;
 }
-
+/* font styling font family, BUI, size Color ------- */
 .font-styling-container{
     /* height: 100%; */
     display: flex;
@@ -90,6 +90,9 @@ body{
     display: flex;
     justify-content: space-between;
 }
+.active-icon{
+    background-color: grey;
+}
 .BUI-container>*{
     width: 30%;
     height: 100%;
@@ -101,4 +104,21 @@ body{
     width: 90%;
     display: flex;
     justify-content: space-between;
+}
+
+/* alignment css --------------------------------- */
+.alignment-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.alignment-container>*{
+    height: 1.5rem;
+    width: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.fa-solid{
+    font-size: 1.2rem;
 }
