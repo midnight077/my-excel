@@ -27,23 +27,24 @@ document.querySelector(".grid").innerHTML = str;
 
 let arr3 = [];
 function initNewSheet(arr3) {
-    let arr = [];
     let arr2 = [];
-    for (let j = 0; j < 26; j++) {
-        let obj = {
-            fontFamily: "Times New Roman",
-            fontWeight: "normal",
-            fontStyle: "normal",
-            textDecoration: "none",
-            fontSize: "16px",
-            bgColor: "#FFFFFF",
-            textColor: "#000000",
-            textAlignment: "left",
-            text: ""
-        };
-        arr.push(obj);
-    }
     for (let i = 0; i < 100; i++) {
+        
+        let arr = [];
+        for (let j = 0; j < 26; j++) {
+            let obj = {
+                fontFamily: "Times New Roman",
+                fontWeight: "normal",
+                fontStyle: "normal",
+                textDecoration: "none",
+                fontSize: "16px",
+                bgColor: "#FFFFFF",
+                textColor: "#000000",
+                textAlignment: "left",
+                text: ""
+            };
+            arr.push(obj);
+        }
         arr2.push(arr);
     }
     arr3.push(arr2);

@@ -71,6 +71,7 @@ function createNewSheetInDB(){
 }
 
 function handleActiveSheet(e) {
+    storeTextInDB(e);
     let allSheets = document.querySelectorAll(".sheet");
     console.log(e.currentTarget);
     for (let i = 0; i < allSheets.length; i++) {
@@ -107,14 +108,12 @@ function loadDataInUI(arr2){
 function storeTextInDB(e){
     for(let i=0 ; i< 100 ; i++){
         for(let j=0 ; j<26; j++){
-            let cell = allGridCells[i*26+j];
+            let cell = allGridCells[(i*26)+j];
             let t = cell.innerText;
             arr2[i][j].text = t;
-            // console.log(t);
-            // t+="abc";
-            console.log( arr2[i][j].text);
+            
         }
-        console.log(arr2[0][0].text);
+        console.log(i,arr2[0][0].test);
     }
     console.log(arr2);
 }
