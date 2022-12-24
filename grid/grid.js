@@ -41,7 +41,9 @@ function initNewSheet(arr3) {
                 bgColor: "#FFFFFF",
                 textColor: "#000000",
                 textAlignment: "left",
-                text: ""
+                text: "",
+                formula :"",
+                dependency :[]
             };
             arr.push(obj);
         }

@@ -5,6 +5,8 @@ let addSheetBtn = document.querySelector(".add-sheet-button");
 let sheetContainer = document.querySelector(".sheets-container");
 let allGridCells = document.querySelectorAll(".grid-ele");
 let cellIdentify = document.querySelector(".cell-identify");
+let formula = document.querySelector(".formula-bar");
+
 
 let fontFamilyBtn = document.querySelector(".font-family-container");
 let BUIContainer = document.querySelectorAll(".BUI-container>*");
@@ -20,7 +22,7 @@ addSheetBtn.addEventListener("click",function(e){
 });
 for (let i = 0; i < allGridCells.length; i++) {
     allGridCells[i].addEventListener("click", selectACell);
-    // allGridCells[i].addEventListener("keydown", storeTextInDB);
+    
 }
 document.querySelector(".sheet").addEventListener("click", handleActiveSheet);
 
@@ -34,6 +36,10 @@ bgColor.addEventListener("change", changeBGColor);
 textColor.addEventListener("change", changeTextColor);
 for (let i = 0; i < alignmentBtns.length; i++)
     alignmentBtns[i].addEventListener("click", changeAlignment);
+
+// formula bar event list -----------------
+formula.addEventListener("keydown", formulaBarMainFn )
+
 
 // ********************************************************************************
 // handling multiple sheets ************************************************
@@ -200,7 +206,7 @@ function changeBGColor(e) {
     let cell = allGridCells[rowAd * 26 + colAd];
     cell.style.backgroundColor = bgColor.value;
     arr2[rowAd][colAd].bgColor = bgColor.value;
-
+    
 }
 function changeTextColor(e) {
     let { rowAd, colAd } = getRowColId(cellIdentify.value);
@@ -233,20 +239,59 @@ function setMenuDefaults(rID, cID) {
     fontFamilyBtn.value = arr2[rID][cID].fontFamily;
     // bui cont
     if (arr2[rID][cID].fontWeight == "bold")
-        BUIContainer[0].classList.add("active-icon");
+    BUIContainer[0].classList.add("active-icon");
     else
-        BUIContainer[0].classList.remove("active-icon");
+    BUIContainer[0].classList.remove("active-icon");
     if (arr2[rID][cID].fontStyle == "italic")
-        BUIContainer[1].classList.add("active-icon");
+    BUIContainer[1].classList.add("active-icon");
     else
-        BUIContainer[1].classList.remove("active-icon");
+    BUIContainer[1].classList.remove("active-icon");
     if (arr2[rID][cID].textDecoration == "underline")
-        BUIContainer[2].classList.add("active-icon");
+    BUIContainer[2].classList.add("active-icon");
     else
-        BUIContainer[2].classList.remove("active-icon");
+    BUIContainer[2].classList.remove("active-icon");
     // font size
     fontSizeCont.value = arr2[rID][cID].fontSize.split("px")[0];
     // color
     bgColor.value = arr2[rID][cID].bgColor;
     textColor.value = arr2[rID][cID].textColor;
+    formula.value = arr2[rID][cID].formula;
+}
+
+// formula bar ***************************************************************************
+function formulaBarMainFn(e){
+    if(e.key == "Enter" && formula.value!=""){
+        // console.log(formula.value);
+        // evaluate formula
+        let evaluatedValue = evaluatedFormula(formula.value , cellIdentify.value);
+        // get curr cell 
+        let { rowAd, colAd } = getRowColId(cellIdentify.value);
+        let cell = allGridCells[rowAd * 26 + colAd];
+        // set formula in UI
+        cell.innerText = evaluatedValue;        
+        // set formula in DB
+        arr2[rowAd][colAd].formula = formula.value;
+        console.log(arr2);
+    }
+}
+
+function evaluatedFormula( stringToEval , currCellAddress ){
+    let regex = /([A-Z])\w+/g;
+    let arr =stringToEval.match(regex);
+    for(let i = 0 ;i< arr.length ; i++){
+        let { rowAd, colAd } = getRowColId(arr[i]);
+        let cellValue = allGridCells[rowAd * 26 + colAd].innerText;
+        stringToEval = stringToEval.replace(arr[i], cellValue);
+        // update dependency in parents db
+        updateDependencyofParent(arr[i], currCellAddress );
+    }
+    // console.log(stringToEval);
+    let evaluatedValue = eval(stringToEval);
+    // console.log(evaluatedValue);
+    return evaluatedValue;
+}
+
+function updateDependencyofParent(parent , child ){
+    let { rowAd, colAd } = getRowColId(parent);
+    arr2[rowAd][colAd].dependency.push(child);
 }
