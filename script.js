@@ -16,13 +16,17 @@ let textColor = document.querySelector(".text-color");
 let alignmentBtns = document.querySelectorAll(".alignment-container>*");
 // *********************************************************************************
 
-addSheetBtn.addEventListener("click",function(e){
+addSheetBtn.addEventListener("click", function (e) {
     storeTextInDB(e);
     createNewSheet(e);
 });
 for (let i = 0; i < allGridCells.length; i++) {
     allGridCells[i].addEventListener("click", selectACell);
-    
+    allGridCells[i].addEventListener("blur",function(e){
+        removeFormula(e);
+        reEvalFormulaForChild(e.target.getAttribute("rid"),e.target.getAttribute("cid"));
+
+    } )
 }
 document.querySelector(".sheet").addEventListener("click", handleActiveSheet);
 
@@ -38,7 +42,7 @@ for (let i = 0; i < alignmentBtns.length; i++)
     alignmentBtns[i].addEventListener("click", changeAlignment);
 
 // formula bar event list -----------------
-formula.addEventListener("keydown", formulaBarMainFn )
+formula.addEventListener("keydown", formulaBarMainFn)
 
 
 // ********************************************************************************
@@ -58,7 +62,7 @@ function createNewSheet(e) {
         allSheets[i].classList.remove("active-sheet");
     }
     sheet.classList.add("active-sheet");
-    
+
 
     sheet.setAttribute("sheetIdx", sheetIdx + 1);
     sheet.innerText = `sheet ${sheetIdx + 2}`;
@@ -67,12 +71,12 @@ function createNewSheet(e) {
     // create sheet in data base
     createNewSheetInDB();
 }
-function createNewSheetInDB(){
+function createNewSheetInDB() {
     initNewSheet(arr3);
     // clear data in UI
-    for(let i = 0 ; i< allGridCells.length ; i++)
+    for (let i = 0; i < allGridCells.length; i++)
         allGridCells[i].innerText = allGridCells[i].style = "";
-    arr2 = arr3[arr3.length-1];
+    arr2 = arr3[arr3.length - 1];
     allGridCells[0].click();
 }
 
@@ -94,32 +98,32 @@ function handleActiveSheet(e) {
     console.log(arr2);
 }
 
-function loadDataInUI(arr2){
-    for(let i=0 ; i< arr2.length ; i++)
-        for(let j = 0 ; j < arr2[0].length ; j++){
-            let aCell = allGridCells[i*26 + j];
-            aCell.style.fontFamily =  arr2[i][j].fontFamily;
-            aCell.style.fontWeight =  arr2[i][j].fontWeight;
-            aCell.style.fontFamily =  arr2[i][j].fontStyle;
-            aCell.style.fontFamily =  arr2[i][j].textDecoration;
-            aCell.style.fontFamily =  arr2[i][j].fontSize;
-            aCell.style.fontFamily =  arr2[i][j].bgColor;
-            aCell.style.fontFamily =  arr2[i][j].textColor;
-            aCell.style.fontFamily =  arr2[i][j].textAlignment;
-            aCell.innerText =  arr2[i][j].text;
+function loadDataInUI(arr2) {
+    for (let i = 0; i < arr2.length; i++)
+        for (let j = 0; j < arr2[0].length; j++) {
+            let aCell = allGridCells[i * 26 + j];
+            aCell.style.fontFamily = arr2[i][j].fontFamily;
+            aCell.style.fontWeight = arr2[i][j].fontWeight;
+            aCell.style.fontFamily = arr2[i][j].fontStyle;
+            aCell.style.fontFamily = arr2[i][j].textDecoration;
+            aCell.style.fontFamily = arr2[i][j].fontSize;
+            aCell.style.fontFamily = arr2[i][j].bgColor;
+            aCell.style.fontFamily = arr2[i][j].textColor;
+            aCell.style.fontFamily = arr2[i][j].textAlignment;
+            aCell.innerText = arr2[i][j].text;
         }
     allGridCells[0].click();
 }
 
-function storeTextInDB(e){
-    for(let i=0 ; i< 100 ; i++){
-        for(let j=0 ; j<26; j++){
-            let cell = allGridCells[(i*26)+j];
+function storeTextInDB(e) {
+    for (let i = 0; i < 100; i++) {
+        for (let j = 0; j < 26; j++) {
+            let cell = allGridCells[(i * 26) + j];
             let t = cell.innerText;
             arr2[i][j].text = t;
-            
+
         }
-        console.log(i,arr2[0][0].test);
+        console.log(i, arr2[0][0].test);
     }
     console.log(arr2);
 }
@@ -206,7 +210,7 @@ function changeBGColor(e) {
     let cell = allGridCells[rowAd * 26 + colAd];
     cell.style.backgroundColor = bgColor.value;
     arr2[rowAd][colAd].bgColor = bgColor.value;
-    
+
 }
 function changeTextColor(e) {
     let { rowAd, colAd } = getRowColId(cellIdentify.value);
@@ -239,17 +243,17 @@ function setMenuDefaults(rID, cID) {
     fontFamilyBtn.value = arr2[rID][cID].fontFamily;
     // bui cont
     if (arr2[rID][cID].fontWeight == "bold")
-    BUIContainer[0].classList.add("active-icon");
+        BUIContainer[0].classList.add("active-icon");
     else
-    BUIContainer[0].classList.remove("active-icon");
+        BUIContainer[0].classList.remove("active-icon");
     if (arr2[rID][cID].fontStyle == "italic")
-    BUIContainer[1].classList.add("active-icon");
+        BUIContainer[1].classList.add("active-icon");
     else
-    BUIContainer[1].classList.remove("active-icon");
+        BUIContainer[1].classList.remove("active-icon");
     if (arr2[rID][cID].textDecoration == "underline")
-    BUIContainer[2].classList.add("active-icon");
+        BUIContainer[2].classList.add("active-icon");
     else
-    BUIContainer[2].classList.remove("active-icon");
+        BUIContainer[2].classList.remove("active-icon");
     // font size
     fontSizeCont.value = arr2[rID][cID].fontSize.split("px")[0];
     // color
@@ -259,31 +263,31 @@ function setMenuDefaults(rID, cID) {
 }
 
 // formula bar ***************************************************************************
-function formulaBarMainFn(e){
-    if(e.key == "Enter" && formula.value!=""){
+function formulaBarMainFn(e) {
+    if (e.key == "Enter" && formula.value != "") {
         // console.log(formula.value);
         // evaluate formula
-        let evaluatedValue = evaluatedFormula(formula.value , cellIdentify.value);
+        let evaluatedValue = evaluatedFormula(formula.value, cellIdentify.value);
         // get curr cell 
         let { rowAd, colAd } = getRowColId(cellIdentify.value);
         let cell = allGridCells[rowAd * 26 + colAd];
         // set formula in UI
-        cell.innerText = evaluatedValue;        
+        cell.innerText = evaluatedValue;
         // set formula in DB
         arr2[rowAd][colAd].formula = formula.value;
         console.log(arr2);
     }
 }
 
-function evaluatedFormula( stringToEval , currCellAddress ){
+function evaluatedFormula(stringToEval, currCellAddress) {
     let regex = /([A-Z])\w+/g;
-    let arr =stringToEval.match(regex);
-    for(let i = 0 ;i< arr.length ; i++){
+    let arr = stringToEval.match(regex);
+    for (let i = 0; i < arr.length; i++) {
         let { rowAd, colAd } = getRowColId(arr[i]);
         let cellValue = allGridCells[rowAd * 26 + colAd].innerText;
         stringToEval = stringToEval.replace(arr[i], cellValue);
         // update dependency in parents db
-        updateDependencyofParent(arr[i], currCellAddress );
+        updateDependencyofParent(arr[i], currCellAddress);
     }
     // console.log(stringToEval);
     let evaluatedValue = eval(stringToEval);
@@ -291,7 +295,50 @@ function evaluatedFormula( stringToEval , currCellAddress ){
     return evaluatedValue;
 }
 
-function updateDependencyofParent(parent , child ){
+function updateDependencyofParent(parent, child) {
     let { rowAd, colAd } = getRowColId(parent);
-    arr2[rowAd][colAd].dependency.push(child);
+    if (arr2[rowAd][colAd].dependency.indexOf(child) == -1)
+        arr2[rowAd][colAd].dependency.push(child);
+}
+
+function reEvalFormulaForChild(rowAd, colAd) {
+    let dependency = arr2[rowAd][colAd].dependency;
+    for (let i = 0; i < dependency.length; i++) {
+        let cellAdr = dependency[i];
+        let { rowAd, colAd } = getRowColId(cellAdr);
+        let formula = arr2[rowAd][colAd].formula;
+        let evaluatedValue = evaluatedFormula(formula, cellAdr);
+        let cell = allGridCells[rowAd * 26 + colAd];
+        // set formula in UI
+        cell.innerText = evaluatedValue;
+        reEvalFormulaForChild(rowAd,colAd);
+    }
+
+}
+
+function removeFormula(e){
+    let cellNode = e.target;
+    let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    if(arr2[rowAd][colAd].formula){
+        let evaluatedValue = evaluatedFormula(arr2[rowAd][colAd].formula , cellIdentify.value );
+        if(cellNode.innerText != evaluatedValue ){
+            // remove yourself from your parents dependency
+            removeMeFromParent(cellIdentify.value ,arr2[rowAd][colAd].formula );
+            // remove formula for curr cellNode
+            arr2[rowAd][colAd].formula = "";
+            // reevaluate my childs
+            // reEvalFormulaForChild(rowAd, colAd);
+        }
+    }
+}
+
+function removeMeFromParent(cellAdr , formula ){
+    let regex = /([A-Z])\w+/g;
+    let arr = formula.match(regex);
+    for (let i = 0; i < arr.length; i++) {
+        let { rowAd, colAd } = getRowColId(arr[i]);
+        // remove yourself from their formula
+        let idx = arr2[rowAd][colAd].dependency.indexOf(cellAdr);
+        arr2[rowAd][colAd].dependency.splice(idx ,1);
+    }
 }
