@@ -6,6 +6,7 @@ let sheetContainer = document.querySelector(".sheets-container");
 let allGridCells = document.querySelectorAll(".grid-ele");
 let cellIdentify = document.querySelector(".cell-identify");
 let formula = document.querySelector(".formula-bar");
+let gridContainer = document.querySelector(".grid-container");
 
 
 let fontFamilyBtn = document.querySelector(".font-family-container");
@@ -14,6 +15,10 @@ let fontSizeCont = document.querySelector(".font-size-container");
 let bgColor = document.querySelector(".bg-color");
 let textColor = document.querySelector(".text-color");
 let alignmentBtns = document.querySelectorAll(".alignment-container>*");
+
+let saveBtn = document.querySelector(".save");
+let openBtn = document.querySelector(".open");
+let newBtn = document.querySelector(".new");
 // *********************************************************************************
 
 addSheetBtn.addEventListener("click", function (e) {
@@ -22,11 +27,17 @@ addSheetBtn.addEventListener("click", function (e) {
 });
 for (let i = 0; i < allGridCells.length; i++) {
     allGridCells[i].addEventListener("click", selectACell);
-    allGridCells[i].addEventListener("blur",function(e){
+    allGridCells[i].addEventListener("blur", function (e) {
         removeFormula(e);
-        reEvalFormulaForChild(e.target.getAttribute("rid"),e.target.getAttribute("cid"));
+        reEvalFormulaForChild(e.target.getAttribute("rid"), e.target.getAttribute("cid"));
 
-    } )
+    })
+    // change height of cell 
+    allGridCells[i].addEventListener("keydown", function (e) {
+        let obj = allGridCells[i].getBoundingClientRect();
+        let { rowAd, colAd } = getRowColId(cellIdentify.value);
+        document.querySelectorAll(".left-col-ele")[rowAd].style.height = obj.height + "px";
+    })
 }
 document.querySelector(".sheet").addEventListener("click", handleActiveSheet);
 
@@ -43,6 +54,17 @@ for (let i = 0; i < alignmentBtns.length; i++)
 
 // formula bar event list -----------------
 formula.addEventListener("keydown", formulaBarMainFn)
+
+// scrolling event
+gridContainer.addEventListener("scroll", function () {
+    let top = gridContainer.scrollTop;
+    let left = gridContainer.scrollLeft;
+    let topLeftBox = document.querySelector(".top-left-box");
+    topLeftBox.style.left = left + "px";
+    topLeftBox.style.top = top + "px";
+    topRow.style.top = top + "px";
+    leftCol.style.left = left + "px";
+})
 
 
 // ********************************************************************************
@@ -115,7 +137,7 @@ function loadDataInUI(arr2) {
     allGridCells[0].click();
 }
 
-function storeTextInDB(e) {
+function storeTextInDB() {
     for (let i = 0; i < 100; i++) {
         for (let j = 0; j < 26; j++) {
             let cell = allGridCells[(i * 26) + j];
@@ -123,9 +145,7 @@ function storeTextInDB(e) {
             arr2[i][j].text = t;
 
         }
-        console.log(i, arr2[0][0].test);
     }
-    console.log(arr2);
 }
 
 // getting cell in formula bar *****************************************************
@@ -311,19 +331,19 @@ function reEvalFormulaForChild(rowAd, colAd) {
         let cell = allGridCells[rowAd * 26 + colAd];
         // set formula in UI
         cell.innerText = evaluatedValue;
-        reEvalFormulaForChild(rowAd,colAd);
+        reEvalFormulaForChild(rowAd, colAd);
     }
 
 }
 
-function removeFormula(e){
+function removeFormula(e) {
     let cellNode = e.target;
     let { rowAd, colAd } = getRowColId(cellIdentify.value);
-    if(arr2[rowAd][colAd].formula){
-        let evaluatedValue = evaluatedFormula(arr2[rowAd][colAd].formula , cellIdentify.value );
-        if(cellNode.innerText != evaluatedValue ){
+    if (arr2[rowAd][colAd].formula) {
+        let evaluatedValue = evaluatedFormula(arr2[rowAd][colAd].formula, cellIdentify.value);
+        if (cellNode.innerText != evaluatedValue) {
             // remove yourself from your parents dependency
-            removeMeFromParent(cellIdentify.value ,arr2[rowAd][colAd].formula );
+            removeMeFromParent(cellIdentify.value, arr2[rowAd][colAd].formula);
             // remove formula for curr cellNode
             arr2[rowAd][colAd].formula = "";
             // reevaluate my childs
@@ -332,13 +352,63 @@ function removeFormula(e){
     }
 }
 
-function removeMeFromParent(cellAdr , formula ){
+function removeMeFromParent(cellAdr, formula) {
     let regex = /([A-Z])\w+/g;
     let arr = formula.match(regex);
     for (let i = 0; i < arr.length; i++) {
         let { rowAd, colAd } = getRowColId(arr[i]);
         // remove yourself from their formula
         let idx = arr2[rowAd][colAd].dependency.indexOf(cellAdr);
-        arr2[rowAd][colAd].dependency.splice(idx ,1);
+        arr2[rowAd][colAd].dependency.splice(idx, 1);
     }
+}
+
+// ****************************************************************************
+// new open save
+
+saveBtn.addEventListener("click", downloadSheetData);
+openBtn.addEventListener("click", openFile);
+newBtn.addEventListener("click", newTabOpen);
+function downloadSheetData(e) {
+    storeTextInDB();
+    const data = JSON.stringify(arr3);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    // download btn
+    let a = document.createElement("a");
+    // /download
+    a.download = "sheet.json";
+    a.href = url;
+    a.click();
+}
+
+function openFile(){
+    let input = document.createElement("input");
+    input.setAttribute("type","file");
+    input.click();
+    input.addEventListener("change" , function(){
+
+        console.log("hi");
+        let files = input.files;
+        let reqFileObj = files[0];
+        const fr = new FileReader();
+        fr.readAsText(reqFileObj);
+        fr.addEventListener("load",function(){
+            // console.log(fr.result);
+            arr3 = JSON.parse(fr.result);
+            console.log(arr3);
+            loadDataInUI(arr3[0]);
+            // window.open("index.html", "_blank");
+            
+            // remove all sheets from the bottom 
+            // move to arr3 and click addsheet btn
+            
+        })
+    });
+    
+}
+
+function newTabOpen(){
+    window.open("index.html", "_blank");
+
 }

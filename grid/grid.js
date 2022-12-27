@@ -8,11 +8,11 @@ topRow.innerHTML = str;
 
 // left col => 1 to 100
 str = "";
-
+let leftCol = document.querySelector(".left-col");
 for (let i = 0; i < 100; i++) {
     str += `<div class="left-col-ele"> ${i + 1}</div>`;
 }
-document.querySelector(".left-col").innerHTML = str;
+leftCol.innerHTML = str;
 
 // main grid
 str = "";

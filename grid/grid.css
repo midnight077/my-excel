@@ -1,7 +1,15 @@
+.grid-container{
+    position: relative;
+    overflow: auto;
+}
 .top-left-box {
     height: 2rem;
     width: 2rem;
     background-color: lightgrey;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
 }
 
 .top-row {
@@ -11,11 +19,16 @@
     position: absolute;
     top: 0px;
     left: 2rem;
+    z-index: 90;
 }
 
 .left-col {
     width: 2rem;
     background-color: lightgreen;
+    position: absolute;
+    top: 2rem;
+    left: 0;
+    z-index: 90;
 }
 
 .grid {
@@ -34,7 +47,7 @@
 
 .left-col-ele {
     width: 2rem;
-    height: 2rem;
+    min-height: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,10 +56,11 @@
 }
 
 .grid-ele {
-    height: 2rem;
+    min-height: 2rem;
     min-width: 7rem;
     background-color: lightcyan;
     border: 1px solid;
+    word-break: break-all;
     /* display: flex;
     justify-content: center;
     align-items: center; */
@@ -54,8 +68,4 @@
 
 .row-grid {
     display: flex;
-}
-.grid-container{
-    position: relative;
-    overflow: auto;
 }

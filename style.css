@@ -122,3 +122,24 @@ body{
 .fa-solid{
     font-size: 1.2rem;
 }
+
+/* new open save */
+.new-open-save-container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.new-open-save-container>*{
+    font-size: 2rem;
+}
+
+/* cut copy paste */
+.cut-copy-paste-container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.cut-copy-paste-container>*{
+    font-size: 2rem;
+}
+
