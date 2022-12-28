@@ -19,6 +19,10 @@ let alignmentBtns = document.querySelectorAll(".alignment-container>*");
 let saveBtn = document.querySelector(".save");
 let openBtn = document.querySelector(".open");
 let newBtn = document.querySelector(".new");
+
+let cutBtn = document.querySelector(".cut");
+let copyBtn = document.querySelector(".copy");
+let pasteBtn = document.querySelector(".paste");
 // *********************************************************************************
 
 addSheetBtn.addEventListener("click", function (e) {
@@ -28,7 +32,8 @@ addSheetBtn.addEventListener("click", function (e) {
 for (let i = 0; i < allGridCells.length; i++) {
     allGridCells[i].addEventListener("click", selectACell);
     allGridCells[i].addEventListener("blur", function (e) {
-        removeFormula(e);
+
+        removeFormula(e.target);
         reEvalFormulaForChild(e.target.getAttribute("rid"), e.target.getAttribute("cid"));
 
     })
@@ -126,12 +131,12 @@ function loadDataInUI(arr2) {
             let aCell = allGridCells[i * 26 + j];
             aCell.style.fontFamily = arr2[i][j].fontFamily;
             aCell.style.fontWeight = arr2[i][j].fontWeight;
-            aCell.style.fontFamily = arr2[i][j].fontStyle;
-            aCell.style.fontFamily = arr2[i][j].textDecoration;
-            aCell.style.fontFamily = arr2[i][j].fontSize;
-            aCell.style.fontFamily = arr2[i][j].bgColor;
-            aCell.style.fontFamily = arr2[i][j].textColor;
-            aCell.style.fontFamily = arr2[i][j].textAlignment;
+            aCell.style.fontStyle = arr2[i][j].fontStyle;
+            aCell.style.textDecoration = arr2[i][j].textDecoration;
+            aCell.style.fontSize = arr2[i][j].fontSize;
+            aCell.style.backgroundColor = arr2[i][j].bgColor;
+            aCell.style.color = arr2[i][j].textColor;
+            aCell.style.textAlignment = arr2[i][j].textAlignment;
             aCell.innerText = arr2[i][j].text;
         }
     allGridCells[0].click();
@@ -284,6 +289,19 @@ function setMenuDefaults(rID, cID) {
 
 // formula bar ***************************************************************************
 function formulaBarMainFn(e) {
+
+    // check if their is a change in formula
+    if (e.key == "Enter" && formula.value != "") {
+        let { rowAd, colAd } = getRowColId(cellIdentify.value);
+        if(arr2[rowAd][colAd].formula != ""){
+            // remove formula
+            let cellNode = allGridCells[rowAd * 26 + colAd];
+            removeFormula(cellNode);
+            reEvalFormulaForChild(rowAd,colAd);
+        }
+    }
+
+    //
     if (e.key == "Enter" && formula.value != "") {
         // console.log(formula.value);
         // evaluate formula
@@ -336,8 +354,7 @@ function reEvalFormulaForChild(rowAd, colAd) {
 
 }
 
-function removeFormula(e) {
-    let cellNode = e.target;
+function removeFormula(cellNode) {
     let { rowAd, colAd } = getRowColId(cellIdentify.value);
     if (arr2[rowAd][colAd].formula) {
         let evaluatedValue = evaluatedFormula(arr2[rowAd][colAd].formula, cellIdentify.value);
@@ -382,33 +399,49 @@ function downloadSheetData(e) {
     a.click();
 }
 
-function openFile(){
+function openFile() {
     let input = document.createElement("input");
-    input.setAttribute("type","file");
+    input.setAttribute("type", "file");
     input.click();
-    input.addEventListener("change" , function(){
-
-        console.log("hi");
+    input.addEventListener("change", function () {
         let files = input.files;
         let reqFileObj = files[0];
         const fr = new FileReader();
         fr.readAsText(reqFileObj);
-        fr.addEventListener("load",function(){
+        fr.addEventListener("load", function () {
             // console.log(fr.result);
             arr3 = JSON.parse(fr.result);
             console.log(arr3);
+            arr2 = arr3[0];
             loadDataInUI(arr3[0]);
             // window.open("index.html", "_blank");
-            
+
             // remove all sheets from the bottom 
             // move to arr3 and click addsheet btn
-            
+
         })
     });
-    
+
 }
 
-function newTabOpen(){
+function newTabOpen() {
     window.open("index.html", "_blank");
+}
+
+// cut copy paste *******************************************
+
+cutBtn.addEventListener("click", cutDataOfCell);
+copyBtn.addEventListener("click", copyDataOfCell);
+pasteBtn.addEventListener("click", pasteDataToCell);
+
+function cutDataOfCell(){
+    // let { rowAd, colAd } = getRowColId(cellIdentify.value);
+    // let cell = allGridCells[rowAd * 26 + colAd];
+
+}
+function copyDataOfCell(){
+
+}
+function pasteDataToCell(){
 
 }
